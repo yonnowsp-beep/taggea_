@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAGGEA | Data Command Center</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,11 +24,10 @@
                         line: { base: 'var(--line-base)', soft: 'var(--line-soft)' },
                         neon: { cyan: '#00e5ff', blue: '#2979ff', green: '#00e676', amber: '#ffab00', red: '#ff1744' }
                     },
-                    // Definição das duas famílias no Tailwind
                     fontFamily: { 
-                        sans: ['Syne', 'sans-serif'],
-                        display: ['Syne', 'sans-serif'], 
-                        mono: ['JetBrains Mono', 'monospace'] 
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        display: ['Inter', 'sans-serif'], 
+                        mono: ['Roboto Mono', 'monospace'] 
                     }
                 }
             }
@@ -38,78 +37,1576 @@
     <style>
         :root {
             --s0: #f0f4f8; --s1: #ffffff; --s2: #e8edf2; --s3: #d4dbe4;
-            --ink-base: #0d1117; --ink-muted: #4a5568; --ink-ghost: #8896a5;
+            --ink-base: #1a202c; --ink-muted: #4a5568; --ink-ghost: #718096;
             --line-base: #d4dbe4; --line-soft: #eaf0f6;
             --glow-cyan: 0 0 16px rgba(0,229,255,0.25); --glow-blue: 0 0 16px rgba(41,121,255,0.25);
         }
         .dark {
             --s0: #060a10; --s1: #0d1117; --s2: #141b24; --s3: #1c2533;
-            --ink-base: #e8edf5; --ink-muted: #7a8899; --ink-ghost: #3d4f63;
-            --line-base: #1c2533; --line-soft: #141b24;
+            --ink-base: #e2e8f0; --ink-muted: #94a3b8; --ink-ghost: #475569;
+            --line-base: #1e293b; --line-soft: #0f172a;
         }
 
+        *, *::before, *::after { box-sizing: border-box; }
         body { 
             background: var(--s0); 
             color: var(--ink-base); 
-            font-family: 'Syne', sans-serif; /* Fonte padrão para interface */
+            font-family: 'Inter', sans-serif; 
+            -webkit-font-smoothing: antialiased;
         }
-        
         .dark body { background: radial-gradient(ellipse 80% 50% at 50% -10%, #0f1c30 0%, #060a10 70%); }
 
-        /* Inputs e áreas de dados usam Mono para precisão visual */
-        .field { 
-            background: var(--s2); 
-            border: 1px solid var(--line-base); 
-            color: var(--ink-base); 
-            border-radius: 8px; 
-            padding: 8px 12px; 
-            font-size: 12px; 
-            font-family: 'JetBrains Mono', monospace; 
-            width: 100%; 
-        }
-        
-        /* Textareas de conteúdo longo voltam para Syne para melhor leitura */
-        textarea.field { 
-            font-family: 'Syne', sans-serif; 
-            font-size: 13px; 
-            font-weight: 500;
-        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--line-base); border-radius: 2px; }
 
-        /* Tabelas e Métricas usam Mono */
-        .tbl td, .tbl th, .metric-box input, .stat-card .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Botões e Navegação usam Syne (estilo Display) */
-        .btn, .nav-link, .topic-item, .net-tab {
-            font-family: 'Syne', sans-serif;
-            letter-spacing: 0.02em;
-        }
-
-        /* Classes de utilidade para manter a consistência */
-        .font-display { font-family: 'Syne', sans-serif; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* Restante do CSS permanece igual... */
         .sidebar { background: var(--s1); border-right: 1px solid var(--line-base); }
-        .nav-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--ink-muted); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s; border-left: 3px solid transparent; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: var(--ink-muted); font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s; border-left: 3px solid transparent; }
         .nav-link:hover { background: var(--s2); color: var(--ink-base); }
         .nav-link.active { background: rgba(0,229,255,0.08); color: #00e5ff; border-left-color: #00e5ff; }
+
         .card { background: var(--s1); border: 1px solid var(--line-base); border-radius: 12px; transition: border-color .2s, box-shadow .2s; }
         .card:hover { border-color: rgba(0,229,255,0.3); box-shadow: var(--glow-cyan); }
         .card-glass { background: rgba(13,17,23,0.6); backdrop-filter: blur(16px); border: 1px solid var(--line-base); border-radius: 12px; }
+        html:not(.dark) .card-glass { background: rgba(255,255,255,0.8); }
+
         .feed-item { background: var(--s2); border: 1px solid var(--line-soft); border-left: 3px solid transparent; border-radius: 8px; cursor: pointer; transition: all .2s; }
+        .feed-item:hover { background: var(--s3); border-color: var(--line-base); }
         .feed-item.active { background: rgba(0,229,255,0.06); border-left-color: #00e5ff; border-color: rgba(0,229,255,0.25); }
-        .sent-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid var(--line-base); background: var(--s2); cursor: pointer; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--ink-muted); font-family: 'Syne'; }
-        .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; border: 1px solid; font-family: 'JetBrains Mono'; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; transition: all .2s; border: 1px solid transparent; }
+        .feed-item.status-pending { border-left-color: #ffab00; }
+        .feed-item.status-ok { border-left-color: #00e676; }
+        .feed-item.status-deleted { opacity: 0.4; border-left-color: #ff1744; text-decoration: line-through; }
+
+        .field { background: var(--s2); border: 1px solid var(--line-base); color: var(--ink-base); border-radius: 6px; padding: 8px 12px; font-size: 13px; font-family: 'Inter', sans-serif; width: 100%; transition: border-color .2s, box-shadow .2s; }
+        .field:focus { outline: none; border-color: #00e5ff; box-shadow: 0 0 0 3px rgba(0,229,255,0.12); }
+        textarea.field { resize: vertical; }
+
+        .font-mono, .metric-box input, .tbl td, .badge { font-family: 'Roboto Mono', monospace !important; }
+
+        .sent-btn { flex: 1; padding: 10px; border-radius: 8px; border: 2px solid var(--line-base); background: var(--s2); cursor: pointer; transition: all .2s; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--ink-muted); }
+        .sent-btn:hover { border-color: var(--ink-muted); }
+        .sent-btn.active-pos { border-color: #00e676; background: rgba(0,230,118,0.1); color: #00e676; }
+        .sent-btn.active-neu { border-color: #7a8899; background: rgba(122,136,153,0.1); color: #7a8899; }
+        .sent-btn.active-neg { border-color: #ff1744; background: rgba(255,23,68,0.1); color: #ff1744; }
+
+        .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; border: 1px solid; }
+        .badge-cyan { color: #00e5ff; border-color: rgba(0,229,255,0.3); background: rgba(0,229,255,0.08); }
+        .badge-green { color: #00e676; border-color: rgba(0,230,118,0.3); background: rgba(0,230,118,0.08); }
+        .badge-amber { color: #ffab00; border-color: rgba(255,171,0,0.3); background: rgba(255,171,0,0.08); }
+        .badge-red { color: #ff1744; border-color: rgba(255,23,68,0.3); background: rgba(255,23,68,0.08); }
+        .badge-ghost { color: var(--ink-muted); border-color: var(--line-base); background: var(--s2); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; border: 1px solid transparent; font-family: 'Inter', sans-serif; }
         .btn-primary { background: linear-gradient(135deg, #00e5ff, #2979ff); color: #000; box-shadow: 0 4px 20px rgba(0,229,255,0.25); }
-        .tbl th { background: var(--s2); color: var(--ink-ghost); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; padding: 10px 14px; border-bottom: 1px solid var(--line-base); }
-        .stat-card { background: var(--s1); border: 1px solid var(--line-base); border-radius: 12px; padding: 20px 24px; }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,229,255,0.4); }
+        .btn-ghost { background: transparent; border-color: var(--line-base); color: var(--ink-muted); }
+        .btn-ghost:hover { background: var(--s2); color: var(--ink-base); }
+        .btn-danger { background: rgba(255,23,68,0.1); border-color: rgba(255,23,68,0.3); color: #ff1744; }
+        .btn-danger:hover { background: rgba(255,23,68,0.2); }
+        .btn-success { background: rgba(0,230,118,0.1); border-color: rgba(0,230,118,0.3); color: #00e676; }
+        .btn-success:hover { background: rgba(0,230,118,0.2); }
+        .btn-xs { padding: 4px 10px; font-size: 11px; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-icon { padding: 6px 8px; }
+
+        .tbl th { background: var(--s2); color: var(--ink-ghost); font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding: 10px 14px; border-bottom: 1px solid var(--line-base); position: sticky; top: 0; z-index: 5; }
+        .tbl td { padding: 10px 14px; border-bottom: 1px solid var(--line-soft); font-size: 12px; vertical-align: middle; }
+        .tbl tr:hover td { background: var(--s2); }
+        .tbl tr.deleted td { opacity: 0.4; }
+
+        @keyframes slideRight { from { transform: translateX(110%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { animation: slideRight .3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        @keyframes fadeOut { to { opacity: 0; transform: scale(.95); } }
+        .toast-exit { animation: fadeOut .3s ease forwards; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-box { background: var(--s1); border: 1px solid var(--line-base); border-radius: 16px; padding: 32px; min-width: 380px; max-width: 90vw; box-shadow: 0 32px 80px rgba(0,0,0,0.5); }
+        @keyframes modalIn { from { transform: scale(.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-box { animation: modalIn .25s cubic-bezier(0.34,1.2,0.64,1) forwards; }
+
+        .topic-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all .2s; color: var(--ink-muted); }
+        .topic-item:hover { background: var(--s2); color: var(--ink-base); }
+        .topic-item.active { background: rgba(0,229,255,0.08); color: #00e5ff; font-weight: 600; }
+        .topic-item .topic-actions { opacity: 0; display: flex; gap: 4px; }
+        .topic-item:hover .topic-actions { opacity: 1; }
+
+        .net-tab { padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; border: 1px solid var(--line-base); background: var(--s2); color: var(--ink-muted); white-space: nowrap; }
+        .net-tab:hover { background: var(--s3); }
+        .net-tab.active { background: #00e5ff; color: #000; border-color: #00e5ff; box-shadow: 0 0 12px rgba(0,229,255,0.3); }
+
+        .metric-box { background: var(--s2); border: 1px solid var(--line-base); border-radius: 8px; text-align: center; padding: 8px 4px; }
+        .metric-box.highlight { border-color: rgba(0,229,255,0.4); background: rgba(0,229,255,0.05); }
+        .metric-box input { background: transparent; border: none; width: 100%; text-align: center; font-size: 16px; font-weight: 700; color: var(--ink-base); outline: none; }
+        .metric-box.highlight input { color: #00e5ff; }
+
+        .stat-card { background: var(--s1); border: 1px solid var(--line-base); border-radius: 12px; padding: 20px 24px; transition: all .2s; }
+        .stat-card:hover { border-color: rgba(0,229,255,0.3); }
         .glow-cyan { color: #00e5ff; text-shadow: 0 0 20px rgba(0,229,255,0.5); }
+
+        .pulse { width: 8px; height: 8px; border-radius: 50%; position: relative; }
+        .pulse::after { content: ''; position: absolute; inset: -3px; border-radius: 50%; animation: pulse 1.5s infinite; }
+        .pulse-amber { background: #ffab00; } .pulse-amber::after { border: 2px solid #ffab00; }
+        .pulse-green { background: #00e676; } .pulse-green::after { border: 2px solid #00e676; }
+        @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .3; transform: scale(1.6); } }
+
+        [data-tip] { position: relative; }
+        [data-tip]:hover::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--s3); border: 1px solid var(--line-base); color: var(--ink-base); font-size: 11px; padding: 4px 8px; border-radius: 6px; white-space: nowrap; z-index: 999; pointer-events: none; }
+
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 80px 40px; color: var(--ink-ghost); text-align: center; }
+
+        .status-ok-pill { background: rgba(0,230,118,0.1); color: #00e676; border: 1px solid rgba(0,230,118,0.3); border-radius: 99px; padding: 2px 8px; font-size: 10px; font-weight: 700; }
+        .status-pending-pill { background: rgba(255,171,0,0.1); color: #ffab00; border: 1px solid rgba(255,171,0,0.3); border-radius: 99px; padding: 2px 8px; font-size: 10px; font-weight: 700; }
+        .status-deleted-pill { background: rgba(255,23,68,0.1); color: #ff1744; border: 1px solid rgba(255,23,68,0.3); border-radius: 99px; padding: 2px 8px; font-size: 10px; font-weight: 700; }
+
+        .view-panel { transition: opacity .2s ease; }
+        .view-panel.hidden { display: none !important; }
+
+        .toggle-track { width: 36px; height: 20px; border-radius: 10px; background: var(--line-base); position: relative; cursor: pointer; transition: background .2s; }
+        .dark .toggle-track { background: rgba(0,229,255,0.3); }
+        .toggle-thumb { width: 14px; height: 14px; border-radius: 50%; background: white; position: absolute; top: 3px; left: 3px; transition: transform .2s; }
+        .dark .toggle-thumb { transform: translateX(16px); }
+
+        html:not(.dark) .field { color-scheme: light; }
+        .dark .field { color-scheme: dark; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
-    ...
+
+<aside class="w-60 sidebar flex flex-col flex-shrink-0 z-50">
+    <div class="h-14 flex items-center gap-3 px-5 border-b border-line-base">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-blue flex items-center justify-center flex-shrink-0">
+            <span class="text-black font-display font-black text-sm">A</span>
+        </div>
+        <div>
+            <div class="font-display font-black text-xs tracking-widest text-ink-base uppercase">TAGGEA</div>
+            <div class="text-[9px] font-mono text-ink-ghost tracking-wider">INTEL v2.0</div>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-3 space-y-6">
+        <div>
+            <div class="px-3 mb-2 text-[9px] font-black uppercase tracking-widest text-ink-ghost">Módulos</div>
+            <div onclick="switchView('triagem')" id="nav-triagem" class="nav-link active">
+                <i class="fa-solid fa-list-check text-sm w-4 text-center"></i> Triagem
+            </div>
+            <div onclick="switchView('lista')" id="nav-lista" class="nav-link">
+                <i class="fa-solid fa-table-list text-sm w-4 text-center"></i> Lista Geral
+            </div>
+            <div onclick="switchView('dashboard')" id="nav-dashboard" class="nav-link">
+                <i class="fa-solid fa-chart-pie text-sm w-4 text-center"></i> Analytics
+            </div>
+        </div>
+
+        <div>
+            <div class="px-3 mb-2 flex justify-between items-center">
+                <span class="text-[9px] font-black uppercase tracking-widest text-ink-ghost">Temas</span>
+                <button onclick="openThemeModal('new')" class="text-ink-ghost hover:text-neon-cyan transition-colors" data-tip="Novo tema">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                </button>
+            </div>
+            <div id="themes-list" class="space-y-0.5"></div>
+        </div>
+    </div>
+
+    <div class="p-4 border-t border-line-base space-y-3">
+        <div class="flex items-center justify-between">
+            <span class="text-xs text-ink-ghost">Modo escuro</span>
+            <div class="toggle-track" onclick="toggleTheme()"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="flex items-center gap-2.5">
+            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-neon-cyan/20 to-neon-blue/20 border border-line-base flex items-center justify-center text-neon-cyan text-xs">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div>
+                <div class="text-xs font-bold text-ink-base">Analista Sênior</div>
+                <div class="text-[9px] font-mono text-ink-ghost">ID: 8492-X</div>
+            </div>
+        </div>
+        <div class="flex items-center justify-between pt-1 border-t border-line-soft">
+            <span id="storage-indicator" class="text-[9px] font-mono text-ink-ghost">💾 0 KB salvo</span>
+            <button onclick="clearAllData()" class="text-[9px] text-ink-ghost hover:text-red-400 transition-colors font-mono" data-tip="Resetar todos os dados">
+                <i class="fa-solid fa-rotate-left"></i> Reset
+            </button>
+        </div>
+    </div>
+</aside>
+
+<main class="flex-1 flex flex-col overflow-hidden">
+
+    <header class="h-14 bg-surface-0/95 backdrop-blur border-b border-line-base flex items-center justify-between px-6 z-40 flex-shrink-0">
+        <div class="flex items-center gap-2 text-sm">
+            <span class="text-ink-ghost" id="hdr-module">Triagem</span>
+            <i class="fa-solid fa-chevron-right text-[9px] text-ink-ghost"></i>
+            <span class="font-bold text-neon-cyan flex items-center gap-1.5" id="hdr-theme">
+                <i class="fa-solid fa-layer-group text-xs"></i> Todos os Temas
+            </span>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="relative hidden md:block">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-ghost text-xs"></i>
+                <input id="global-search" oninput="applyFilters()" type="text" placeholder="Busca rápida..." class="field w-48 pl-8 py-1.5 text-xs rounded-lg">
+            </div>
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-1 border border-line-base text-xs">
+                <div class="pulse pulse-amber"></div>
+                <span id="pending-count" class="font-mono font-bold text-ink-base">0 Pendentes</span>
+            </div>
+            <button onclick="downloadExcelTemplate()" class="btn btn-ghost btn-sm" data-tip="Baixar Planilha Padrão">
+                <i class="fa-solid fa-file-excel"></i> Modelo
+            </button>
+            <button onclick="document.getElementById('import-file').click()" class="btn btn-ghost btn-sm" data-tip="Importar Lote (XLSX, CSV, JSON)">
+                <i class="fa-solid fa-file-import"></i> Upload
+            </button>
+            <input id="import-file" type="file" accept=".json,.csv,.xlsx,.xls" class="hidden" onchange="importData(event)">
+        </div>
+    </header>
+
+    <div class="flex-1 overflow-hidden relative">
+
+        <div id="view-triagem" class="view-panel flex h-full absolute inset-0">
+            <div class="w-[340px] flex-shrink-0 flex flex-col border-r border-line-base" style="background:var(--s1)">
+                <div class="p-4 border-b border-line-base">
+                    <button onclick="startNewPost()" class="btn btn-primary w-full">
+                        <i class="fa-solid fa-plus"></i> Nova Publicação
+                    </button>
+                </div>
+                <div class="px-4 py-3 border-b border-line-base">
+                    <div class="flex gap-1.5 overflow-x-auto pb-1">
+                        <button onclick="setNetFilter('all')" id="fn-all" class="net-tab active">Todos</button>
+                        <button onclick="setNetFilter('Instagram')" id="fn-Instagram" class="net-tab">Insta</button>
+                        <button onclick="setNetFilter('LinkedIn')" id="fn-LinkedIn" class="net-tab">LinkedIn</button>
+                        <button onclick="setNetFilter('Facebook')" id="fn-Facebook" class="net-tab">Face</button>
+                        <button onclick="setNetFilter('X (Twitter)')" id="fn-X (Twitter)" class="net-tab">X</button>
+                    </div>
+                </div>
+                <div class="px-4 py-2 border-b border-line-base flex items-center gap-2">
+                    <span class="text-[10px] text-ink-ghost font-bold uppercase">Sentimento:</span>
+                    <div class="flex gap-1">
+                        <button onclick="setSentFilter('all')" id="sf-all" class="btn btn-xs" style="background:rgba(0,229,255,0.1);color:#00e5ff;border-color:rgba(0,229,255,0.3);">Todos</button>
+                        <button onclick="setSentFilter('positive')" id="sf-positive" class="btn btn-xs btn-ghost"><i class="fa-regular fa-face-smile"></i></button>
+                        <button onclick="setSentFilter('neutral')" id="sf-neutral" class="btn btn-xs btn-ghost"><i class="fa-regular fa-face-meh"></i></button>
+                        <button onclick="setSentFilter('negative')" id="sf-negative" class="btn btn-xs btn-ghost"><i class="fa-regular fa-face-frown"></i></button>
+                        <button onclick="setSentFilter('pending')" id="sf-pending" class="btn btn-xs btn-ghost" data-tip="Só pendentes"><i class="fa-solid fa-circle-dot text-amber-400"></i></button>
+                    </div>
+                </div>
+                <div id="feed-list" class="flex-1 overflow-y-auto p-3 space-y-2"></div>
+                <div class="px-4 py-2 border-t border-line-base flex items-center justify-between text-[10px] text-ink-ghost font-mono">
+                    <span id="feed-count-label">0 posts</span>
+                    <button onclick="toggleShowDeleted()" id="btn-show-deleted" class="btn btn-xs btn-ghost">
+                        <i class="fa-solid fa-eye-slash"></i> Excluídos
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 flex flex-col overflow-hidden relative" style="background:var(--s0)">
+                <div id="toast-container" class="absolute top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+                <div id="work-area" class="flex-1 overflow-y-auto p-6 pb-28 space-y-5">
+
+                    <div class="card-glass rounded-xl overflow-hidden">
+                        <div class="flex gap-3 p-4">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                                <i class="fa-solid fa-microchip text-sm"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[10px] font-black uppercase tracking-widest text-purple-400 mb-1">AI Analysis</div>
+                                <p id="ai-text" class="text-xs text-ink-muted font-mono leading-relaxed">Selecione um item para análise...</p>
+                            </div>
+                            <div class="flex-shrink-0 flex items-start gap-1">
+                                <button onclick="runAiAnalysis()" class="btn btn-xs" style="background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.3);color:#a855f7;" data-tip="Reanalizar com IA">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6 space-y-5">
+
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-black uppercase tracking-widest text-ink-muted flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square text-neon-cyan"></i> Detalhes & Classificação
+                            </h3>
+                            <div class="flex items-center gap-2">
+                                <span id="mode-badge" class="badge badge-ghost font-mono">VIEW</span>
+                                <span id="status-badge" class="badge badge-amber font-mono">PENDENTE</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Rede</label>
+                                <select id="f-network" class="field">
+                                    <option>Instagram</option>
+                                    <option>LinkedIn</option>
+                                    <option>Facebook</option>
+                                    <option>X (Twitter)</option>
+                                    <option>YouTube</option>
+                                    <option>TikTok</option>
+                                    <option>Outros</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Perfil / Autor</label>
+                                <input type="text" id="f-profile" class="field" placeholder="@usuario">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Data</label>
+                                <input type="date" id="f-date" class="field">
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">URL</label>
+                                <div class="flex gap-1">
+                                    <input type="url" id="f-link" class="field flex-1" placeholder="https://...">
+                                    <a id="btn-link" href="#" target="_blank" class="btn btn-ghost btn-icon border border-line-base" data-tip="Abrir link">
+                                        <i class="fa-solid fa-external-link-alt text-xs"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Conteúdo da Publicação</label>
+                            <div class="relative">
+                                <textarea id="f-text" rows="4" class="field w-full border-l-2 border-l-neon-cyan/30 focus:border-l-neon-cyan" placeholder="Cole aqui o texto da publicação..."></textarea>
+                                <div id="char-count" class="absolute bottom-2 right-3 text-[10px] font-mono text-ink-ghost">0 chars</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block flex items-center gap-2">
+                                Tags / Palavras-chave
+                                <span class="text-[9px] text-ink-ghost font-normal normal-case">(Enter para adicionar)</span>
+                            </label>
+                            <div class="field flex flex-wrap gap-1.5 min-h-[36px] cursor-text" id="tags-container" onclick="document.getElementById('tag-input').focus()">
+                                <input id="tag-input" type="text" placeholder="Adicionar tag..." class="bg-transparent border-none outline-none text-xs flex-1 min-w-[100px]" onkeydown="handleTagInput(event)">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Notas Internas</label>
+                            <textarea id="f-notes" rows="2" class="field w-full" placeholder="Observações, contexto adicional..."></textarea>
+                        </div>
+
+                        <div class="border-t border-line-base"></div>
+
+                        <div class="grid grid-cols-12 gap-5">
+
+                            <div class="col-span-7">
+                                <h4 class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-3 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-simple"></i> Métricas de Engajamento
+                                </h4>
+                                <div class="grid grid-cols-4 gap-2 mb-3">
+                                    <div class="metric-box">
+                                        <div class="text-[9px] text-ink-ghost font-black uppercase mb-1">Likes</div>
+                                        <input type="number" id="f-likes" min="0" oninput="recalcEngagement()" class="">
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="text-[9px] text-ink-ghost font-black uppercase mb-1">Comets</div>
+                                        <input type="number" id="f-comments" min="0" oninput="recalcEngagement()" class="">
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="text-[9px] text-ink-ghost font-black uppercase mb-1">Shares</div>
+                                        <input type="number" id="f-shares" min="0" oninput="recalcEngagement()" class="">
+                                    </div>
+                                    <div class="metric-box highlight">
+                                        <div class="text-[9px] text-neon-cyan font-black uppercase mb-1">Total</div>
+                                        <input type="number" id="f-engagement" readonly class="">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="metric-box">
+                                        <div class="text-[9px] text-ink-ghost font-black uppercase mb-1">Views / Impressões</div>
+                                        <input type="number" id="f-views" min="0" class="">
+                                    </div>
+                                    <div class="metric-box">
+                                        <div class="text-[9px] text-ink-ghost font-black uppercase mb-1">Alcance</div>
+                                        <input type="number" id="f-reach" min="0" class="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-span-5 space-y-4">
+                                <h4 class="text-[10px] font-black uppercase tracking-widest text-ink-ghost flex items-center gap-2">
+                                    <i class="fa-solid fa-tags"></i> Classificação
+                                </h4>
+
+                                <div>
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-2 block">Sentimento</label>
+                                    <div class="flex gap-2">
+                                        <button onclick="setSentiment('positive')" id="btn-pos" class="sent-btn">
+                                            <i class="fa-regular fa-face-smile text-xl"></i>
+                                            <span>Positivo</span>
+                                        </button>
+                                        <button onclick="setSentiment('neutral')" id="btn-neu" class="sent-btn">
+                                            <i class="fa-regular fa-face-meh text-xl"></i>
+                                            <span>Neutro</span>
+                                        </button>
+                                        <button onclick="setSentiment('negative')" id="btn-neg" class="sent-btn">
+                                            <i class="fa-regular fa-face-frown text-xl"></i>
+                                            <span>Negativo</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Tema Associado</label>
+                                    <select id="f-theme" class="field text-neon-cyan font-bold"></select>
+                                </div>
+
+                                <div>
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Prioridade</label>
+                                    <select id="f-priority" class="field">
+                                        <option value="normal">Normal</option>
+                                        <option value="high">Alta</option>
+                                        <option value="urgent">Urgente</option>
+                                        <option value="low">Baixa</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="empty-state" class="hidden flex-1 items-center justify-center">
+                    <div class="empty-state">
+                        <div class="w-16 h-16 rounded-2xl bg-surface-2 border border-line-base flex items-center justify-center text-ink-ghost text-2xl">
+                            <i class="fa-solid fa-inbox"></i>
+                        </div>
+                        <div class="text-sm font-bold text-ink-muted">Nenhuma publicação encontrada</div>
+                        <div class="text-xs text-ink-ghost">Ajuste os filtros ou adicione um novo post.</div>
+                        <button onclick="startNewPost()" class="btn btn-primary btn-sm mt-2"><i class="fa-solid fa-plus"></i> Nova Publicação</button>
+                    </div>
+                </div>
+
+                <div id="footer-bar" class="absolute bottom-0 left-0 w-full border-t border-line-base p-4 flex justify-between items-center z-40" style="background:var(--s1)">
+                    <div class="flex items-center gap-2">
+                        <button onclick="deleteCurrentPost()" id="btn-delete" class="btn btn-danger btn-sm" data-tip="Excluir publicação">
+                            <i class="fa-solid fa-trash-can"></i> Excluir
+                        </button>
+                        <button onclick="duplicatePost()" id="btn-dup" class="btn btn-ghost btn-sm" data-tip="Duplicar post">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="prevPost()" class="btn btn-ghost btn-sm" data-tip="Post anterior">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <button onclick="nextPost()" class="btn btn-ghost btn-sm">
+                            Pular <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="saveAndNext()" class="btn btn-primary">
+                            <i class="fa-solid fa-check"></i> Salvar &amp; Próximo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-lista" class="view-panel hidden flex-col h-full absolute inset-0 p-6 pb-0">
+            <div class="flex justify-between items-end mb-5">
+                <div>
+                    <h2 class="text-xl font-black text-ink-base">Lista <span class="glow-cyan">Geral</span></h2>
+                    <p class="text-xs text-ink-ghost font-mono mt-0.5" id="list-subtitle">Todos os posts classificados</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="btn btn-success btn-sm">
+                        <i class="fa-solid fa-file-excel"></i> Excel
+                    </button>
+                    <button onclick="exportJSON()" class="btn btn-ghost btn-sm">
+                        <i class="fa-solid fa-file-code"></i> JSON
+                    </button>
+                    <button onclick="openBulkDeleteModal()" class="btn btn-danger btn-sm">
+                        <i class="fa-solid fa-trash-can"></i> Excluir seleção
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 mb-4 flex-wrap">
+                <div class="relative">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-ghost text-xs"></i>
+                    <input oninput="renderListView()" id="list-search" type="text" placeholder="Filtrar..." class="field pl-8 w-52">
+                </div>
+                <select id="list-net-filter" onchange="renderListView()" class="field w-36">
+                    <option value="">Todas as redes</option>
+                    <option>Instagram</option><option>LinkedIn</option><option>Facebook</option><option>X (Twitter)</option>
+                </select>
+                <select id="list-sent-filter" onchange="renderListView()" class="field w-36">
+                    <option value="">Todos sent.</option>
+                    <option value="positive">Positivo</option>
+                    <option value="neutral">Neutro</option>
+                    <option value="negative">Negativo</option>
+                </select>
+                <select id="list-status-filter" onchange="renderListView()" class="field w-36">
+                    <option value="">Todos status</option>
+                    <option value="OK">Classificados</option>
+                    <option value="PENDENTE">Pendentes</option>
+                    <option value="DELETED">Excluídos</option>
+                </select>
+                <button onclick="clearListFilters()" class="btn btn-ghost btn-sm">
+                    <i class="fa-solid fa-filter-circle-xmark"></i> Limpar
+                </button>
+                <span id="list-count" class="text-xs text-ink-ghost font-mono ml-auto"></span>
+            </div>
+            <div class="flex-1 card overflow-hidden flex flex-col mb-6">
+                <div class="overflow-auto flex-1">
+                    <table class="w-full tbl">
+                        <thead>
+                            <tr>
+                                <th class="w-8"><input type="checkbox" id="check-all" onchange="toggleSelectAll(this)" class="rounded"></th>
+                                <th onclick="sortList('id')" class="cursor-pointer hover:text-ink-base">ID <i class="fa-solid fa-sort text-[8px]"></i></th>
+                                <th onclick="sortList('date')" class="cursor-pointer hover:text-ink-base">Data <i class="fa-solid fa-sort text-[8px]"></i></th>
+                                <th>Rede</th>
+                                <th>Perfil</th>
+                                <th>Texto</th>
+                                <th>Tema</th>
+                                <th onclick="sortList('sentiment')" class="cursor-pointer hover:text-ink-base">Sentimento <i class="fa-solid fa-sort text-[8px]"></i></th>
+                                <th onclick="sortList('engagement')" class="cursor-pointer hover:text-ink-base text-right">Engaj. <i class="fa-solid fa-sort text-[8px]"></i></th>
+                                <th>Status</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-dashboard" class="view-panel hidden flex-col h-full absolute inset-0 overflow-y-auto p-6">
+            <div class="max-w-6xl mx-auto w-full space-y-6">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <h2 class="text-xl font-black text-ink-base">Analytics <span class="glow-cyan">Hub</span></h2>
+                        <p class="text-xs text-ink-ghost font-mono mt-0.5">Atualizado em tempo real</p>
+                    </div>
+                    <button onclick="updateDashboard()" class="btn btn-ghost btn-sm" data-tip="Atualizar">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="stat-card">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-2">Total Posts</div>
+                        <div class="text-3xl font-black font-mono text-ink-base" id="d-total">0</div>
+                        <div class="text-[10px] text-ink-ghost mt-1" id="d-total-sub">0 pendentes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-2">Engajamento</div>
+                        <div class="text-3xl font-black font-mono text-neon-cyan" id="d-eng">0</div>
+                        <div class="text-[10px] text-ink-ghost mt-1" id="d-eng-avg">Média: 0/post</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-2">Sentimento Dom.</div>
+                        <div class="text-2xl font-black text-ink-base" id="d-sent">--</div>
+                        <div class="text-[10px] text-ink-ghost mt-1" id="d-sent-pct">--</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-2">Rede Top</div>
+                        <div class="text-2xl font-black text-ink-base" id="d-top-net">--</div>
+                        <div class="text-[10px] text-ink-ghost mt-1" id="d-top-net-pct">--</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="stat-card flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1">Curtidas</div>
+                            <div class="text-2xl font-mono font-black text-ink-base" id="d-likes">0</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
+                            <i class="fa-regular fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1">Comentários</div>
+                            <div class="text-2xl font-mono font-black text-ink-base" id="d-comments">0</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                            <i class="fa-regular fa-comment"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1">Compartilhamentos</div>
+                            <div class="text-2xl font-mono font-black text-ink-base" id="d-shares">0</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <i class="fa-solid fa-share"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card p-5">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-4">Distribuição por Rede</div>
+                        <div class="h-56"><canvas id="chartNetwork"></canvas></div>
+                    </div>
+                    <div class="card p-5">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-4">Distribuição por Sentimento</div>
+                        <div class="h-56"><canvas id="chartSentiment"></canvas></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card p-5">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-4">Engajamento por Tema</div>
+                        <div class="h-56"><canvas id="chartTheme"></canvas></div>
+                    </div>
+                    <div class="card p-5">
+                        <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-4">Posts ao Longo do Tempo</div>
+                        <div class="h-56"><canvas id="chartTimeline"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="card p-5">
+                    <div class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-4">Top 5 Posts por Engajamento</div>
+                    <table class="w-full tbl">
+                        <thead><tr><th>Perfil</th><th>Rede</th><th>Texto</th><th class="text-right">Engaj.</th><th>Sentimento</th></tr></thead>
+                        <tbody id="top-posts-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="modal-delete" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="flex items-start gap-4 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 flex-shrink-0">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h3 class="font-black text-ink-base mb-1">Excluir Publicação</h3>
+                <p class="text-sm text-ink-muted" id="modal-delete-msg">Tem certeza? Esta ação pode ser desfeita.</p>
+            </div>
+        </div>
+        <div class="flex gap-2 justify-end">
+            <button onclick="closeModal('modal-delete')" class="btn btn-ghost">Cancelar</button>
+            <button onclick="confirmDelete()" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Excluir</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-theme" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3 class="font-black text-ink-base mb-4" id="modal-theme-title">Novo Tema</h3>
+        <div class="space-y-3 mb-6">
+            <div>
+                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Nome do Tema</label>
+                <input type="text" id="theme-name-input" class="field w-full" placeholder="Ex: Taxação LCI, ESG...">
+            </div>
+            <div>
+                <label class="text-[10px] font-black uppercase tracking-widest text-ink-ghost mb-1.5 block">Descrição (opcional)</label>
+                <input type="text" id="theme-desc-input" class="field w-full" placeholder="Descrição breve">
+            </div>
+        </div>
+        <div class="flex gap-2 justify-between">
+            <button id="btn-delete-theme" onclick="deleteCurrentTheme()" class="btn btn-danger btn-sm hidden">
+                <i class="fa-solid fa-trash-can"></i> Excluir Tema
+            </button>
+            <div class="flex gap-2 ml-auto">
+                <button onclick="closeModal('modal-theme')" class="btn btn-ghost">Cancelar</button>
+                <button onclick="saveTheme()" class="btn btn-primary">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-bulk-delete" class="modal-overlay hidden">
+    <div class="modal-box">
+        <h3 class="font-black text-ink-base mb-2">Excluir Seleção</h3>
+        <p class="text-sm text-ink-muted mb-6" id="bulk-delete-msg">Nenhum item selecionado.</p>
+        <div class="flex gap-2 justify-end">
+            <button onclick="closeModal('modal-bulk-delete')" class="btn btn-ghost">Cancelar</button>
+            <button onclick="confirmBulkDelete()" class="btn btn-danger"><i class="fa-solid fa-trash-can"></i> Excluir Todos</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===================== STATE =====================
+const DEFAULT_THEMES = [
+    { id: 'tax_lca', name: 'Taxação LCA', desc: 'Debate sobre tributação de LCIs e LCAs' },
+    { id: 'finfluence', name: 'Finfluence', desc: 'Influenciadores financeiros' },
+    { id: 'pri', name: 'PRI in Person', desc: 'Evento PRI' },
+    { id: 'global', name: 'Global Insights', desc: 'Insights globais de mercado' }
+];
+const DEFAULT_POSTS = [
+    { id: 1, network: 'Instagram', profile: 'fabio.cermesi', date: '10/06/2025', text: '@taggeaoficial qual sua posição sobre uma eventual taxação de LCIs?', likes: 2, comments: 1, shares: 0, views: 0, reach: 0, engagement: 3, status: 'PENDENTE', theme_id: 'tax_lca', sentiment: 'neutral', tags: ['lci', 'taxação'], notes: '', priority: 'normal', link: '' },
+    { id: 2, network: 'LinkedIn', profile: 'Giovanna Bambicini', date: '10/11/2025', text: 'Imagina na COP? Workshop exclusivo sobre sustentabilidade e investimentos responsáveis.', likes: 40, comments: 4, shares: 2, views: 1200, reach: 950, engagement: 46, status: 'OK', theme_id: 'pri', sentiment: 'positive', tags: ['cop', 'workshop'], notes: '', priority: 'high', link: '' },
+    { id: 3, network: 'Facebook', profile: 'Valor Investe', date: '04/06/2025', text: 'O número de influenciadores que falam sobre finanças cresceu quase 40% no último ano.', likes: 127, comments: 12, shares: 8, views: 5400, reach: 4200, engagement: 147, status: 'OK', theme_id: 'finfluence', sentiment: 'positive', tags: ['finfluencer', 'crescimento'], notes: 'Matéria relevante', priority: 'normal', link: '' },
+    { id: 4, network: 'X (Twitter)', profile: '@limeinhalf', date: '15/05/2025', text: 'Global Insights chega à segunda edição em outubro. Muito conteúdo relevante!', likes: 85, comments: 7, shares: 15, views: 3200, reach: 2800, engagement: 107, status: 'OK', theme_id: 'global', sentiment: 'positive', tags: ['global', 'insights'], notes: '', priority: 'normal', link: '' },
+    { id: 5, network: 'Instagram', profile: '@invsavy', date: '20/06/2025', text: 'LCA zerada com a nova regulação? Muita gente vai perder dinheiro se não ficar de olho.', likes: 312, comments: 45, shares: 30, views: 18000, reach: 12000, engagement: 387, status: 'PENDENTE', theme_id: 'tax_lca', sentiment: 'negative', tags: ['lca', 'regulação', 'investimento'], notes: 'Post de alta repercussão', priority: 'urgent', link: '' }
+];
+
+let themes = (() => { try { const s = localStorage.getItem('taggea_themes'); return s ? JSON.parse(s) : DEFAULT_THEMES; } catch { return DEFAULT_THEMES; } })();
+let posts  = (() => { try { const s = localStorage.getItem('taggea_posts');  return s ? JSON.parse(s) : DEFAULT_POSTS;  } catch { return DEFAULT_POSTS;  } })();
+
+function saveState() {
+    try {
+        localStorage.setItem('taggea_posts',  JSON.stringify(posts));
+        localStorage.setItem('taggea_themes', JSON.stringify(themes));
+        updateStorageIndicator();
+    } catch(e) {
+        showToast('Erro ao salvar: localStorage cheio?', 'error');
+    }
+}
+
+function updateStorageIndicator() {
+    try {
+        const bytes = (localStorage.getItem('taggea_posts')||'').length + (localStorage.getItem('taggea_themes')||'').length;
+        const kb = (bytes / 1024).toFixed(1);
+        const el = document.getElementById('storage-indicator');
+        if (el) el.textContent = `💾 ${kb} KB salvo`;
+    } catch {}
+}
+
+function clearAllData() {
+    if (!confirm('Limpar TODOS os dados salvos e restaurar exemplos? Esta ação é irreversível.')) return;
+    localStorage.removeItem('taggea_posts');
+    localStorage.removeItem('taggea_themes');
+    posts = JSON.parse(JSON.stringify(DEFAULT_POSTS));
+    themes = JSON.parse(JSON.stringify(DEFAULT_THEMES));
+    saveState();
+    renderSidebar();
+    applyFilters();
+    showToast('Dados resetados para o padrão.', 'warn');
+}
+
+let activeTheme = 'all';
+let activeNetFilter = 'all';
+let activeSentFilter = 'all';
+let currentIdx = 0;
+let isCreating = false;
+let showDeleted = false;
+let selectedRows = new Set();
+let sortConfig = { key: 'id', dir: 1 };
+let chartsInst = {};
+let deletingId = null;
+let editingThemeId = null;
+let currentTags = [];
+let pendingDeleteId = null;
+
+// ===================== UTILS =====================
+const $ = id => document.getElementById(id);
+const fmtDate = d => { if(!d) return ''; const p=d.split('/'); return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:''; };
+const unfmtDate = d => { if(!d) return ''; const p=d.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:''; };
+const netIcon = n => ({ Instagram:'fa-instagram text-pink-500', LinkedIn:'fa-linkedin text-blue-500', Facebook:'fa-facebook text-blue-600', 'X (Twitter)':'fa-x-twitter text-ink-base', YouTube:'fa-youtube text-red-500', TikTok:'fa-tiktok text-ink-base' }[n] || 'fa-globe');
+const sentLabel = s => ({ positive:'😊 Positivo', neutral:'😐 Neutro', negative:'😞 Negativo' }[s] || '-');
+const sentColor = s => ({ positive:'text-green-400', neutral:'text-ink-ghost', negative:'text-red-400' }[s] || '');
+function nextId() { return posts.reduce((m,p)=>Math.max(m,p.id),0)+1; }
+function getFiltered() {
+    return posts.filter(p => {
+        if (!showDeleted && p.status === 'DELETED') return false;
+        if (activeTheme !== 'all' && p.theme_id !== activeTheme) return false;
+        if (activeNetFilter !== 'all' && p.network !== activeNetFilter) return false;
+        if (activeSentFilter === 'pending') { if (p.status !== 'PENDENTE') return false; }
+        else if (activeSentFilter !== 'all') { if (p.sentiment !== activeSentFilter) return false; }
+        const q = ($('global-search')?.value||'').toLowerCase();
+        if (q && !((p.text+p.profile+p.notes).toLowerCase().includes(q))) return false;
+        return true;
+    });
+}
+function getThemeName(id) { return themes.find(t=>t.id===id)?.name || '-'; }
+
+// ===================== THEME =====================
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
+if (localStorage.theme === 'light') document.documentElement.classList.remove('dark');
+
+// ===================== SIDEBAR THEMES =====================
+function renderSidebar() {
+    const list = $('themes-list');
+    const sel = $('f-theme');
+    const filtered = getFiltered();
+    const allCount = getFiltered().length;
+
+    list.innerHTML = `
+        <div onclick="selectTheme('all')" class="topic-item ${activeTheme==='all'?'active':''}">
+            <div class="flex items-center gap-2"><i class="fa-solid fa-layer-group text-xs"></i> Todos</div>
+            <span class="text-[10px] font-mono bg-surface-2 px-1.5 py-0.5 rounded">${allCount}</span>
+        </div>`;
+
+    sel.innerHTML = '<option value="">Sem tema...</option>';
+
+    themes.forEach(t => {
+        const cnt = posts.filter(p=>p.theme_id===t.id && (showDeleted||p.status!=='DELETED')).length;
+        list.innerHTML += `
+            <div onclick="selectTheme('${t.id}')" class="topic-item ${activeTheme===t.id?'active':''}">
+                <div class="flex items-center gap-2"><i class="fa-regular fa-folder text-xs"></i> ${t.name}</div>
+                <div class="flex items-center gap-1">
+                    <span class="text-[10px] font-mono bg-surface-2 px-1.5 py-0.5 rounded">${cnt}</span>
+                    <div class="topic-actions">
+                        <button onclick="event.stopPropagation();openThemeModal('edit','${t.id}')" class="btn btn-icon btn-ghost" style="font-size:10px;padding:2px 5px;" data-tip="Editar tema"><i class="fa-solid fa-pen"></i></button>
+                    </div>
+                </div>
+            </div>`;
+        sel.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+    });
+}
+
+function selectTheme(id) {
+    activeTheme = id;
+    const name = id==='all' ? 'Todos os Temas' : getThemeName(id);
+    $('hdr-theme').innerHTML = `<i class="fa-solid fa-folder-open text-xs"></i> ${name}`;
+    renderSidebar();
+    applyFilters();
+}
+
+// ===================== VIEWS =====================
+function switchView(view) {
+    ['triagem','lista','dashboard'].forEach(v=>{
+        $(`view-${v}`).classList.add('hidden');
+        $(`nav-${v}`).classList.remove('active');
+    });
+    $(`view-${view}`).classList.remove('hidden');
+    $(`nav-${view}`).classList.add('active');
+    $('hdr-module').textContent = { triagem:'Triagem', lista:'Lista Geral', dashboard:'Analytics' }[view];
+    if (view==='triagem') applyFilters();
+    if (view==='lista') renderListView();
+    if (view==='dashboard') updateDashboard();
+}
+
+// ===================== FILTERS =====================
+function applyFilters() {
+    const fp = getFiltered();
+    const pending = fp.filter(p=>p.status==='PENDENTE').length;
+    $('pending-count').textContent = `${pending} Pendentes`;
+    $('feed-count-label').textContent = `${fp.length} posts`;
+    currentIdx = 0;
+    renderFeed();
+    if (fp.length > 0) { loadPost(0); showWorkArea(true); }
+    else { showWorkArea(false); }
+}
+
+function showWorkArea(show) {
+    $('work-area').classList.toggle('hidden', !show);
+    $('footer-bar').classList.toggle('hidden', !show);
+    $('empty-state').classList.toggle('hidden', show);
+    $('empty-state').classList.toggle('flex', !show);
+}
+
+function setNetFilter(net) {
+    activeNetFilter = net;
+    document.querySelectorAll('.net-tab').forEach(b => b.classList.remove('active'));
+    $(`fn-${net}`).classList.add('active');
+    applyFilters();
+}
+
+function setSentFilter(s) {
+    activeSentFilter = s;
+    ['all','positive','neutral','negative','pending'].forEach(k => {
+        const btn = $(`sf-${k}`);
+        if (!btn) return;
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+        btn.className = 'btn btn-xs btn-ghost';
+    });
+    const active = $(`sf-${s}`);
+    if (active) {
+        active.className = 'btn btn-xs';
+        active.style.background = 'rgba(0,229,255,0.1)';
+        active.style.color = '#00e5ff';
+        active.style.borderColor = 'rgba(0,229,255,0.3)';
+    }
+    applyFilters();
+}
+
+function toggleShowDeleted() {
+    showDeleted = !showDeleted;
+    const btn = $('btn-show-deleted');
+    btn.innerHTML = showDeleted
+        ? '<i class="fa-solid fa-eye"></i> Ocultando excluídos'
+        : '<i class="fa-solid fa-eye-slash"></i> Excluídos';
+    applyFilters();
+}
+
+// ===================== FEED =====================
+function renderFeed() {
+    const fp = getFiltered();
+    const container = $('feed-list');
+    container.innerHTML = '';
+    if (fp.length === 0) {
+        container.innerHTML = '<div class="empty-state py-12"><i class="fa-solid fa-inbox text-2xl mb-2"></i><div class="text-xs">Nenhum post</div></div>';
+        return;
+    }
+    fp.forEach((post, i) => {
+        const active = (i===currentIdx && !isCreating) ? 'active' : '';
+        const statusClass = post.status==='DELETED' ? 'status-deleted' : post.status==='PENDENTE' ? 'status-pending' : 'status-ok';
+        const icon = netIcon(post.network);
+        const prioIcon = { urgent:'<i class="fa-solid fa-fire text-red-400 text-xs"></i>', high:'<i class="fa-solid fa-arrow-up text-amber-400 text-xs"></i>', low:'<i class="fa-solid fa-arrow-down text-blue-400 text-xs"></i>' }[post.priority] || '';
+        container.innerHTML += `
+            <div onclick="loadPost(${i})" class="feed-item ${active} ${statusClass} p-3 space-y-1.5 select-none">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-brands ${icon} text-sm"></i>
+                        <span class="text-xs font-bold text-ink-muted truncate max-w-[120px]">${post.profile}</span>
+                        ${prioIcon}
+                    </div>
+                    <div class="flex items-center gap-1">
+                        ${post.status==='PENDENTE'?'<span class="badge badge-amber text-[9px]">Pend</span>':''}
+                        ${post.status==='DELETED'?'<span class="badge badge-red text-[9px]">Del</span>':''}
+                        <span class="text-[9px] font-mono text-ink-ghost">${post.date||''}</span>
+                    </div>
+                </div>
+                <p class="text-[11px] text-ink-ghost leading-relaxed line-clamp-2">${post.text}</p>
+                <div class="flex items-center gap-2 text-[9px] font-mono text-ink-ghost">
+                    <span><i class="fa-regular fa-heart"></i> ${post.likes||0}</span>
+                    <span><i class="fa-regular fa-comment"></i> ${post.comments||0}</span>
+                    <span><i class="fa-solid fa-share"></i> ${post.shares||0}</span>
+                    ${post.engagement > 0 ? `<span class="ml-auto text-neon-cyan font-bold">${post.engagement} eng</span>` : ''}
+                </div>
+            </div>`;
+    });
+}
+
+// ===================== LOAD / POPULATE =====================
+function loadPost(idx) {
+    const fp = getFiltered();
+    if (idx < 0 || idx >= fp.length) return;
+    isCreating = false;
+    currentIdx = idx;
+    renderFeed();
+    populateForm(fp[idx]);
+}
+
+function populateForm(post) {
+    $('f-network').value = post.network || 'Instagram';
+    $('f-profile').value = post.profile || '';
+    $('f-date').value = fmtDate(post.date);
+    $('f-link').value = post.link || '';
+    $('btn-link').href = post.link || '#';
+    $('f-text').value = post.text || '';
+    $('f-likes').value = post.likes || 0;
+    $('f-comments').value = post.comments || 0;
+    $('f-shares').value = post.shares || 0;
+    $('f-views').value = post.views || 0;
+    $('f-reach').value = post.reach || 0;
+    $('f-theme').value = post.theme_id || '';
+    $('f-priority').value = post.priority || 'normal';
+    $('f-notes').value = post.notes || '';
+    recalcEngagement();
+
+    currentTags = [...(post.tags || [])];
+    renderTags();
+    updateCharCount();
+
+    const sb = $('status-badge');
+    if (post.status==='OK') { sb.className='badge badge-green font-mono'; sb.textContent='CLASSIFICADO'; }
+    else if (post.status==='DELETED') { sb.className='badge badge-red font-mono'; sb.textContent='EXCLUÍDO'; }
+    else { sb.className='badge badge-amber font-mono'; sb.textContent='PENDENTE'; }
+
+    const mb = $('mode-badge');
+    mb.className='badge badge-ghost font-mono';
+    mb.textContent = `#${post.id}`;
+
+    resetSentiment();
+    if (post.sentiment) activateSentiment(post.sentiment);
+
+    const thName = getThemeName(post.theme_id);
+    $('ai-text').textContent = `Post #${post.id} — Tema: ${thName} | Status: ${post.status} | Prioridade: ${post.priority||'normal'}`;
+
+    const db = $('btn-delete');
+    if (post.status==='DELETED') {
+        db.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Restaurar';
+        db.className = 'btn btn-success btn-sm';
+        db.onclick = restoreCurrentPost;
+    } else {
+        db.innerHTML = '<i class="fa-solid fa-trash-can"></i> Excluir';
+        db.className = 'btn btn-danger btn-sm';
+        db.onclick = deleteCurrentPost;
+    }
+}
+
+function startNewPost() {
+    isCreating = true;
+    currentTags = [];
+    const mb = $('mode-badge'); mb.className='badge badge-cyan font-mono'; mb.textContent='NOVO';
+    const sb = $('status-badge'); sb.className='badge badge-amber font-mono'; sb.textContent='PENDENTE';
+    $('f-network').value='Instagram'; $('f-profile').value=''; $('f-date').value='';
+    $('f-link').value=''; $('btn-link').href='#'; $('f-text').value='';
+    $('f-likes').value=0; $('f-comments').value=0; $('f-shares').value=0;
+    $('f-views').value=0; $('f-reach').value=0; $('f-engagement').value=0;
+    $('f-theme').value= activeTheme!=='all'?activeTheme:'';
+    $('f-priority').value='normal'; $('f-notes').value='';
+    $('ai-text').textContent='Modo criação. Preencha os dados e salve.';
+    renderTags();
+    resetSentiment();
+    const db = $('btn-delete');
+    db.innerHTML='<i class="fa-solid fa-trash-can"></i> Excluir';
+    db.className='btn btn-danger btn-sm';
+    db.onclick=deleteCurrentPost;
+    showWorkArea(true);
+    $('f-profile').focus();
+}
+
+// ===================== SAVE =====================
+function saveAndNext() {
+    const fp = getFiltered();
+    const sentiment = document.querySelector('.sent-btn.active-pos') ? 'positive'
+        : document.querySelector('.sent-btn.active-neu') ? 'neutral'
+        : document.querySelector('.sent-btn.active-neg') ? 'negative' : null;
+
+    const data = {
+        network: $('f-network').value,
+        profile: $('f-profile').value,
+        date: unfmtDate($('f-date').value),
+        link: $('f-link').value,
+        text: $('f-text').value,
+        likes: parseInt($('f-likes').value)||0,
+        comments: parseInt($('f-comments').value)||0,
+        shares: parseInt($('f-shares').value)||0,
+        views: parseInt($('f-views').value)||0,
+        reach: parseInt($('f-reach').value)||0,
+        engagement: parseInt($('f-engagement').value)||0,
+        theme_id: $('f-theme').value,
+        priority: $('f-priority').value,
+        notes: $('f-notes').value,
+        sentiment,
+        tags: [...currentTags],
+        status: 'OK'
+    };
+
+    if (isCreating) {
+        data.id = nextId();
+        posts.unshift(data);
+        showToast('Post criado com sucesso!', 'success');
+        isCreating = false;
+    } else if (fp.length > 0) {
+        const orig = fp[currentIdx];
+        const gi = posts.findIndex(p=>p.id===orig.id);
+        if (gi !== -1) Object.assign(posts[gi], data);
+        showToast('Salvo com sucesso!', 'success');
+    }
+    saveState();
+    renderSidebar();
+    applyFilters();
+    if (!isCreating && currentIdx < getFiltered().length - 1) {
+        setTimeout(() => loadPost(currentIdx + 1), 100);
+    }
+}
+
+// ===================== DELETE =====================
+function deleteCurrentPost() {
+    const fp = getFiltered();
+    if (!fp[currentIdx]) return;
+    pendingDeleteId = fp[currentIdx].id;
+    $('modal-delete-msg').textContent = `Excluir post de @${fp[currentIdx].profile}? Você poderá restaurá-lo depois.`;
+    openModal('modal-delete');
+}
+
+function restoreCurrentPost() {
+    const fp = getFiltered();
+    if (!fp[currentIdx]) return;
+    const gi = posts.findIndex(p=>p.id===fp[currentIdx].id);
+    if (gi !== -1) { posts[gi].status = 'PENDENTE'; showToast('Post restaurado!', 'success'); }
+    saveState(); renderSidebar(); applyFilters();
+}
+
+function confirmDelete() {
+    if (pendingDeleteId === null) return;
+    const gi = posts.findIndex(p=>p.id===pendingDeleteId);
+    if (gi !== -1) {
+        posts[gi].status = 'DELETED';
+        showToast('Post excluído (soft delete)', 'warn');
+    }
+    pendingDeleteId = null;
+    closeModal('modal-delete');
+    saveState(); renderSidebar(); applyFilters();
+}
+
+function deleteFromList(id) {
+    pendingDeleteId = id;
+    const p = posts.find(x=>x.id===id);
+    $('modal-delete-msg').textContent = p ? `Excluir post de @${p.profile}?` : 'Excluir este post?';
+    openModal('modal-delete');
+}
+
+function restoreFromList(id) {
+    const gi = posts.findIndex(p=>p.id===id);
+    if (gi !== -1) { posts[gi].status = 'PENDENTE'; showToast('Restaurado!', 'success'); }
+    saveState(); renderListView(); renderSidebar();
+}
+
+function duplicatePost() {
+    const fp = getFiltered();
+    if (!fp[currentIdx]) return;
+    const dup = { ...fp[currentIdx], id: nextId(), status: 'PENDENTE', profile: fp[currentIdx].profile + ' (cópia)' };
+    posts.unshift(dup);
+    showToast('Post duplicado!', 'success');
+    saveState(); renderSidebar(); applyFilters();
+}
+
+// ===================== BULK DELETE =====================
+function openBulkDeleteModal() {
+    if (selectedRows.size === 0) { showToast('Nenhum item selecionado', 'warn'); return; }
+    $('bulk-delete-msg').textContent = `Excluir ${selectedRows.size} post(s) selecionado(s)?`;
+    openModal('modal-bulk-delete');
+}
+
+function confirmBulkDelete() {
+    selectedRows.forEach(id => {
+        const gi = posts.findIndex(p=>p.id===id);
+        if (gi !== -1) posts[gi].status = 'DELETED';
+    });
+    selectedRows.clear();
+    closeModal('modal-bulk-delete');
+    showToast(`Posts excluídos (soft delete)`, 'warn');
+    saveState(); renderSidebar(); renderListView();
+}
+
+function toggleSelectAll(el) {
+    const rows = document.querySelectorAll('.row-check');
+    rows.forEach(cb => {
+        cb.checked = el.checked;
+        const id = parseInt(cb.dataset.id);
+        if (el.checked) selectedRows.add(id); else selectedRows.delete(id);
+    });
+}
+
+// ===================== NAVIGATION =====================
+function prevPost() { const fp=getFiltered(); if(currentIdx>0) loadPost(currentIdx-1); }
+function nextPost() { const fp=getFiltered(); if(currentIdx<fp.length-1) loadPost(currentIdx+1); }
+
+// ===================== SENTIMENT =====================
+function setSentiment(s) { resetSentiment(); activateSentiment(s); }
+function activateSentiment(s) {
+    const map = { positive: ['btn-pos','active-pos'], neutral: ['btn-neu','active-neu'], negative: ['btn-neg','active-neg'] };
+    if (map[s]) $(map[s][0]).classList.add(map[s][1]);
+}
+function resetSentiment() {
+    $('btn-pos').className = 'sent-btn';
+    $('btn-neu').className = 'sent-btn';
+    $('btn-neg').className = 'sent-btn';
+}
+
+// ===================== METRICS =====================
+function recalcEngagement() {
+    const l = parseInt($('f-likes').value)||0;
+    const c = parseInt($('f-comments').value)||0;
+    const s = parseInt($('f-shares').value)||0;
+    $('f-engagement').value = l+c+s;
+}
+
+// ===================== CHAR COUNT =====================
+function updateCharCount() {
+    const len = ($('f-text').value||'').length;
+    $('char-count').textContent = `${len} chars`;
+    $('f-text').oninput = () => $('char-count').textContent = `${$('f-text').value.length} chars`;
+}
+
+// ===================== TAGS =====================
+function renderTags() {
+    const container = $('tags-container');
+    const input = $('tag-input');
+    container.querySelectorAll('.tag-chip').forEach(c=>c.remove());
+    currentTags.forEach(tag => {
+        const chip = document.createElement('span');
+        chip.className = 'tag-chip badge badge-cyan flex items-center gap-1 cursor-pointer';
+        chip.innerHTML = `${tag} <span onclick="removeTag('${tag}')" class="ml-0.5 hover:text-red-400">×</span>`;
+        container.insertBefore(chip, input);
+    });
+}
+
+function handleTagInput(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+        e.preventDefault();
+        const val = e.target.value.trim().replace(',','').toLowerCase();
+        if (val && !currentTags.includes(val)) {
+            currentTags.push(val);
+            renderTags();
+        }
+        e.target.value = '';
+    }
+    if (e.key === 'Backspace' && !e.target.value && currentTags.length > 0) {
+        currentTags.pop();
+        renderTags();
+    }
+}
+
+function removeTag(tag) {
+    currentTags = currentTags.filter(t=>t!==tag);
+    renderTags();
+}
+
+// ===================== LINK =====================
+document.addEventListener('DOMContentLoaded', () => {
+    $('f-link').addEventListener('input', () => {
+        const v = $('f-link').value;
+        $('btn-link').href = v || '#';
+    });
+    $('f-text').addEventListener('input', updateCharCount);
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey||e.metaKey) && e.key==='Enter') saveAndNext();
+    });
+});
+
+// ===================== AI ANALYSIS =====================
+function runAiAnalysis() {
+    $('ai-text').textContent = '⚡ Analisando...';
+    const fp = getFiltered();
+    if (!fp[currentIdx] && !isCreating) { $('ai-text').textContent = 'Nenhum post selecionado.'; return; }
+    const post = isCreating ? { text: $('f-text').value, profile: $('f-profile').value } : fp[currentIdx];
+    setTimeout(() => {
+        const text = post.text.toLowerCase();
+        let insight = `Post de @${post.profile}. `;
+        if (text.includes('taxação') || text.includes('tributação')) insight += 'Detectado: debate sobre tributação de instrumentos financeiros. ';
+        if (text.includes('cresceu') || text.includes('crescimento')) insight += 'Detectado: tendência de crescimento/expansão. ';
+        if (text.includes('negativo') || text.includes('queda') || text.includes('perder')) insight += '⚠️ Alerta: tom possivelmente negativo detectado. ';
+        insight += `Engajamento: ${post.engagement||0} interações.`;
+        $('ai-text').textContent = insight;
+    }, 600);
+}
+
+// ===================== THEMES MODAL =====================
+function openThemeModal(mode, id=null) {
+    editingThemeId = id;
+    $('modal-theme-title').textContent = mode==='new' ? 'Novo Tema' : 'Editar Tema';
+    $('btn-delete-theme').classList.toggle('hidden', mode==='new');
+    if (mode==='edit' && id) {
+        const t = themes.find(x=>x.id===id);
+        if (t) { $('theme-name-input').value=t.name; $('theme-desc-input').value=t.desc||''; }
+    } else {
+        $('theme-name-input').value=''; $('theme-desc-input').value='';
+    }
+    openModal('modal-theme');
+    setTimeout(()=>$('theme-name-input').focus(),100);
+}
+
+function saveTheme() {
+    const name = $('theme-name-input').value.trim();
+    if (!name) { showToast('Nome obrigatório', 'warn'); return; }
+    if (editingThemeId) {
+        const t = themes.find(x=>x.id===editingThemeId);
+        if (t) { t.name=name; t.desc=$('theme-desc-input').value; showToast('Tema atualizado!', 'success'); }
+    } else {
+        const id = name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+        themes.push({ id, name, desc: $('theme-desc-input').value });
+        showToast(`Tema "${name}" criado!`, 'success');
+    }
+    closeModal('modal-theme');
+    saveState(); renderSidebar();
+}
+
+function deleteCurrentTheme() {
+    if (!editingThemeId) return;
+    const name = getThemeName(editingThemeId);
+    const count = posts.filter(p=>p.theme_id===editingThemeId).length;
+    if (count > 0 && !confirm(`Este tema tem ${count} post(s) associado(s). Deseja mesmo excluir? Os posts ficarão sem tema.`)) return;
+    themes = themes.filter(t=>t.id!==editingThemeId);
+    posts.forEach(p=>{ if(p.theme_id===editingThemeId) p.theme_id=''; });
+    closeModal('modal-theme');
+    saveState(); renderSidebar();
+    showToast(`Tema "${name}" excluído.`, 'warn');
+    if (activeTheme===editingThemeId) selectTheme('all');
+}
+
+// ===================== LIST VIEW =====================
+let listSort = { key:'id', dir:1 };
+
+function sortList(key) {
+    if (listSort.key===key) listSort.dir*=-1; else { listSort.key=key; listSort.dir=1; }
+    renderListView();
+}
+
+function clearListFilters() {
+    $('list-search').value=''; $('list-net-filter').value=''; $('list-sent-filter').value=''; $('list-status-filter').value='';
+    renderListView();
+}
+
+function renderListView() {
+    const q = ($('list-search')?.value||'').toLowerCase();
+    const netF = $('list-net-filter')?.value||'';
+    const sentF = $('list-sent-filter')?.value||'';
+    const statusF = $('list-status-filter')?.value||'';
+
+    let data = posts.filter(p => {
+        if (activeTheme!=='all' && p.theme_id!==activeTheme) return false;
+        if (netF && p.network!==netF) return false;
+        if (sentF && p.sentiment!==sentF) return false;
+        if (statusF && p.status!==statusF) return false;
+        if (!showDeleted && p.status==='DELETED') return false;
+        if (q && !((p.text+p.profile+p.notes).toLowerCase().includes(q))) return false;
+        return true;
+    });
+
+    data.sort((a,b)=>{
+        let av=a[listSort.key]||'', bv=b[listSort.key]||'';
+        if (listSort.key==='date') { av=av.split('/').reverse().join(''); bv=bv.split('/').reverse().join(''); }
+        if (typeof av==='number') return (av-bv)*listSort.dir;
+        return String(av).localeCompare(String(bv))*listSort.dir;
+    });
+
+    $('list-count').textContent = `${data.length} resultado(s)`;
+    $('list-subtitle').textContent = `${data.length} posts | Tema: ${activeTheme==='all'?'Todos':getThemeName(activeTheme)}`;
+
+    const tbody = $('list-body');
+    tbody.innerHTML = '';
+    if (data.length===0) {
+        tbody.innerHTML = '<tr><td colspan="11" class="text-center text-ink-ghost py-8 text-xs">Nenhum resultado</td></tr>';
+        return;
+    }
+
+    data.forEach(p => {
+        const deleted = p.status==='DELETED';
+        const statusPill = deleted
+            ? '<span class="status-deleted-pill">EXCLUÍDO</span>'
+            : p.status==='PENDENTE'
+            ? '<span class="status-pending-pill">PENDENTE</span>'
+            : '<span class="status-ok-pill">OK</span>';
+        const sentEl = p.sentiment ? `<span class="${sentColor(p.sentiment)} font-bold text-xs">${sentLabel(p.sentiment)}</span>` : '<span class="text-ink-ghost text-xs">—</span>';
+        tbody.innerHTML += `
+            <tr class="${deleted?'opacity-40':''}">
+                <td><input type="checkbox" class="row-check rounded" data-id="${p.id}" onchange="toggleRowCheck(this)" ${selectedRows.has(p.id)?'checked':''}></td>
+                <td class="font-mono text-xs text-ink-ghost">#${Math.floor(p.id)}</td>
+                <td class="font-mono text-xs">${p.date||'—'}</td>
+                <td><div class="flex items-center gap-1.5"><i class="fa-brands ${netIcon(p.network)} text-sm"></i><span class="text-xs font-bold">${p.network}</span></div></td>
+                <td class="text-xs font-bold text-neon-cyan">${p.profile}</td>
+                <td class="text-xs text-ink-muted max-w-xs"><div class="truncate" title="${p.text}">${p.text}</div></td>
+                <td><span class="badge badge-ghost text-[10px]">${getThemeName(p.theme_id)}</span></td>
+                <td>${sentEl}</td>
+                <td class="text-right font-mono text-xs font-bold">${p.engagement}</td>
+                <td>${statusPill}</td>
+                <td>
+                    <div class="flex items-center gap-1 justify-center">
+                        <button onclick="editFromList(${p.id})" class="btn btn-icon btn-ghost" data-tip="Editar"><i class="fa-solid fa-pen-to-square text-xs"></i></button>
+                        ${deleted
+                            ? `<button onclick="restoreFromList(${p.id})" class="btn btn-icon btn-success" data-tip="Restaurar"><i class="fa-solid fa-rotate-left text-xs"></i></button>`
+                            : `<button onclick="deleteFromList(${p.id})" class="btn btn-icon btn-danger" data-tip="Excluir"><i class="fa-solid fa-trash-can text-xs"></i></button>`
+                        }
+                    </div>
+                </td>
+            </tr>`;
+    });
+}
+
+function toggleRowCheck(el) {
+    const id = Number(el.dataset.id);
+    if (el.checked) selectedRows.add(id); else selectedRows.delete(id);
+}
+
+function editFromList(id) {
+    activeTheme = 'all';
+    switchView('triagem');
+    setTimeout(() => {
+        applyFilters();
+        const idx = getFiltered().findIndex(p=>p.id===id);
+        if (idx !== -1) loadPost(idx);
+    }, 50);
+}
+
+// ===================== EXPORT & TEMPLATE =====================
+function exportToExcel() {
+    const data = posts.filter(p=>p.status!=='DELETED').map(p=>({
+        ID: p.id, Data: p.date, Rede: p.network, Perfil: p.profile, Texto: p.text,
+        Likes: p.likes, Comentários: p.comments, Compartilhamentos: p.shares,
+        Views: p.views, Alcance: p.reach, Engajamento: p.engagement,
+        Tema: getThemeName(p.theme_id), Sentimento: p.sentiment, Prioridade: p.priority,
+        Tags: (p.tags||[]).join(', '), Notas: p.notes, Status: p.status
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'TAGGEA');
+    XLSX.writeFile(wb, `taggea_export_${new Date().toISOString().slice(0,10)}.xlsx`);
+    showToast('Excel exportado!', 'success');
+}
+
+function exportJSON() {
+    const blob = new Blob([JSON.stringify({ posts, themes }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `taggea_export_${new Date().toISOString().slice(0,10)}.json`;
+    a.click(); showToast('JSON exportado!', 'success');
+}
+
+function downloadExcelTemplate() {
+    const templateData = [{
+        network: 'Instagram', profile: '@exemplo_perfil', date: '15/10/2025', link: 'https://instagram.com/p/exemplo', text: 'Cole aqui o texto ou legenda da publicação...',
+        likes: 150, comments: 12, shares: 5, views: 1200, reach: 900,
+        theme_id: 'tax_lca', sentiment: 'neutral', priority: 'normal', tags: 'economia, mercado', notes: 'Nota interna opcional'
+    }];
+    
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    ws['!cols'] = [{wch: 12}, {wch: 15}, {wch: 12}, {wch: 30}, {wch: 50}];
+    XLSX.utils.book_append_sheet(wb, ws, 'Modelo_Importacao');
+    XLSX.writeFile(wb, 'taggea_modelo_importacao.xlsx');
+    showToast('Planilha modelo baixada!', 'success');
+}
+
+// ===================== IMPORT =====================
+function importData(e) {
+    const file = e.target.files[0]; 
+    if (!file) return;
+    const reader = new FileReader();
+
+    if (file.name.endsWith('.json')) {
+        reader.onload = ev => {
+            try {
+                const d = JSON.parse(ev.target.result);
+                if (d.posts) { posts.push(...d.posts.map(p=>({...p, id: nextId()+Math.random()}))); showToast(`${d.posts.length} posts importados!`, 'success'); }
+                if (d.themes) { d.themes.forEach(t=>{ if(!themes.find(x=>x.id===t.id)) themes.push(t); }); }            
+                saveState(); renderSidebar(); applyFilters(); 
+            } catch { showToast('Erro ao importar JSON', 'error'); }
+        };
+        reader.readAsText(file);
+    } 
+    else if (file.name.match(/\.(xlsx|xls|csv)$/)) {
+        reader.onload = ev => {
+            try {
+                const data = new Uint8Array(ev.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+                
+                let imported = 0;
+                json.forEach(row => {
+                    const l = parseInt(row.likes) || 0;
+                    const c = parseInt(row.comments) || 0;
+                    const s = parseInt(row.shares) || 0;
+                    
+                    posts.unshift({
+                        id: nextId() + Math.random(),
+                        network: row.network || row.Rede || 'Outros',
+                        profile: row.profile || row.Perfil || 'Desconhecido',
+                        date: row.date || row.Data || new Date().toLocaleDateString('pt-BR'),
+                        link: row.link || row.Link || '',
+                        text: row.text || row.Texto || '',
+                        likes: l, comments: c, shares: s,
+                        views: parseInt(row.views) || 0, reach: parseInt(row.reach) || 0,
+                        engagement: l + c + s,
+                        theme_id: row.theme_id || row.Tema || '',
+                        sentiment: row.sentiment || row.Sentimento || 'neutral',
+                        priority: row.priority || row.Prioridade || 'normal',
+                        tags: (row.tags || row.Tags || '').split(',').map(t=>t.trim()).filter(Boolean),
+                        notes: row.notes || row.Notas || '',
+                        status: 'PENDENTE'
+                    });
+                    imported++;
+                });
+                
+                showToast(`${imported} publicações carregadas!`, 'success');
+                saveState(); renderSidebar(); applyFilters();
+            } catch(err) {
+                console.error(err);
+                showToast('Erro ao ler a planilha Excel', 'error');
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        showToast('Formato não suportado. Use Excel, CSV ou JSON.', 'warn');
+    }
+    e.target.value = ''; 
+}
+
+// ===================== DASHBOARD =====================
+function updateDashboard() {
+    const fp = posts.filter(p=>p.status!=='DELETED');
+    const pending = fp.filter(p=>p.status==='PENDENTE').length;
+
+    $('d-total').textContent = fp.length;
+    $('d-total-sub').textContent = `${pending} pendentes`;
+
+    const totalEng = fp.reduce((s,p)=>s+(p.engagement||0),0);
+    $('d-eng').textContent = totalEng.toLocaleString('pt-BR');
+    $('d-eng-avg').textContent = `Média: ${fp.length>0?Math.round(totalEng/fp.length):0}/post`;
+
+    $('d-likes').textContent = fp.reduce((s,p)=>s+(p.likes||0),0).toLocaleString('pt-BR');
+    $('d-comments').textContent = fp.reduce((s,p)=>s+(p.comments||0),0).toLocaleString('pt-BR');
+    $('d-shares').textContent = fp.reduce((s,p)=>s+(p.shares||0),0).toLocaleString('pt-BR');
+
+    const sents = { positive:0, neutral:0, negative:0 };
+    fp.forEach(p=>{ if(p.sentiment) sents[p.sentiment]++; });
+    const domSent = Object.entries(sents).sort((a,b)=>b[1]-a[1])[0];
+    $('d-sent').textContent = domSent && domSent[1] > 0 ? sentLabel(domSent[0]) : '--';
+    $('d-sent-pct').textContent = domSent && fp.length>0 && domSent[1] > 0 ? `${Math.round(domSent[1]/fp.length*100)}% dos posts` : '';
+
+    const nets = {};
+    fp.forEach(p=>nets[p.network]=(nets[p.network]||0)+1);
+    const topNet = Object.entries(nets).sort((a,b)=>b[1]-a[1])[0];
+    $('d-top-net').textContent = topNet ? topNet[0] : '--';
+    $('d-top-net-pct').textContent = topNet && fp.length>0 ? `${Math.round(topNet[1]/fp.length*100)}% dos posts` : '';
+
+    Object.values(chartsInst).forEach(c=>c.destroy());
+    chartsInst = {};
+
+    const isDark = document.documentElement.classList.contains('dark');
+    Chart.defaults.color = isDark ? '#7a8899' : '#64748b';
+    Chart.defaults.borderColor = isDark ? '#1c2533' : '#e2e8f0';
+    Chart.register(ChartDataLabels);
+
+    chartsInst.net = new Chart($('chartNetwork'), {
+        type:'doughnut',
+        data:{ labels:Object.keys(nets), datasets:[{ data:Object.values(nets), backgroundColor:['#E1306C','#0A66C2','#1877F2','#e2e8f0','#FF0000','#000'], borderWidth:0, hoverOffset:4 }] },
+        options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}, datalabels:{color:'#fff',formatter:(v,ctx)=>{const t=ctx.chart.data.datasets[0].data.reduce((a,b)=>a+b,0);return v>0?Math.round(v/t*100)+'%':'';},font:{weight:'bold',size:11}} } }
+    });
+
+    chartsInst.sent = new Chart($('chartSentiment'), {
+        type:'bar',
+        data:{ labels:['Positivo','Neutro','Negativo'], datasets:[{ label:'Posts', data:[sents.positive,sents.neutral,sents.negative], backgroundColor:['#00e676','#7a8899','#ff1744'], borderRadius:6, borderSkipped:false }] },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true,grid:{color:isDark?'#1c2533':'#e2e8f0'}}, x:{grid:{display:false}} }, plugins:{ legend:{display:false}, datalabels:{anchor:'end',align:'top',color:isDark?'#7a8899':'#64748b',font:{weight:'bold',size:11},formatter:v=>v>0?v:''} } }
+    });
+
+    const themeEng = {};
+    themes.forEach(t=>{ themeEng[t.name] = fp.filter(p=>p.theme_id===t.id).reduce((s,p)=>s+(p.engagement||0),0); });
+    chartsInst.theme = new Chart($('chartTheme'), {
+        type:'bar',
+        data:{ labels:Object.keys(themeEng), datasets:[{ label:'Engajamento', data:Object.values(themeEng), backgroundColor:'rgba(0,229,255,0.6)', borderColor:'#00e5ff', borderWidth:1, borderRadius:6, borderSkipped:false }] },
+        options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', scales:{ x:{beginAtZero:true,grid:{color:isDark?'#1c2533':'#e2e8f0'}}, y:{grid:{display:false}} }, plugins:{ legend:{display:false}, datalabels:{display:false} } }
+    });
+
+    const byDate = {};
+    fp.forEach(p=>{ if(p.date) { const d=p.date.split('/').reverse().join('-'); byDate[d]=(byDate[d]||0)+1; } });
+    const sortedDates = Object.keys(byDate).sort();
+    chartsInst.time = new Chart($('chartTimeline'), {
+        type:'line',
+        data:{ labels:sortedDates.map(d=>d.slice(5)), datasets:[{ label:'Posts', data:sortedDates.map(d=>byDate[d]), borderColor:'#2979ff', backgroundColor:'rgba(41,121,255,0.1)', fill:true, tension:0.4, pointBackgroundColor:'#2979ff', pointRadius:4 }] },
+        options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{beginAtZero:true,grid:{color:isDark?'#1c2533':'#e2e8f0'}}, x:{grid:{display:false}} }, plugins:{ legend:{display:false}, datalabels:{display:false} } }
+    });
+
+    const top5 = [...fp].sort((a,b)=>(b.engagement||0)-(a.engagement||0)).slice(0,5);
+    $('top-posts-body').innerHTML = top5.map(p=>`
+        <tr>
+            <td class="text-xs font-bold text-neon-cyan">${p.profile}</td>
+            <td class="text-xs">${p.network}</td>
+            <td class="text-xs text-ink-muted max-w-xs"><div class="truncate">${p.text}</div></td>
+            <td class="text-right font-mono font-bold text-xs">${p.engagement}</td>
+            <td><span class="${sentColor(p.sentiment)} text-xs font-bold">${sentLabel(p.sentiment)}</span></td>
+        </tr>`).join('');
+}
+
+// ===================== MODALS =====================
+function openModal(id) { $(id).classList.remove('hidden'); }
+function closeModal(id) { $(id).classList.add('hidden'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target===m) closeModal(m.id); });
+});
+
+// ===================== TOAST =====================
+function showToast(msg, type='success') {
+    const colors = { success:'border-neon-green bg-emerald-500/10', warn:'border-amber-400 bg-amber-500/10', error:'border-neon-red bg-red-500/10' };
+    const icons = { success:'fa-check-circle text-emerald-400', warn:'fa-triangle-exclamation text-amber-400', error:'fa-xmark-circle text-red-400' };
+    const container = $('toast-container');
+    const el = document.createElement('div');
+    el.className = `toast border-l-4 ${colors[type]||colors.success} backdrop-blur-sm border border-line-base text-ink-base px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 text-xs font-bold min-w-[220px]`;
+    el.innerHTML = `<i class="fa-solid ${icons[type]||icons.success}"></i> ${msg}`;
+    container.appendChild(el);
+    setTimeout(()=>{ el.classList.add('toast-exit'); setTimeout(()=>el.remove(),300); }, 2800);
+}
+
+// ===================== KEYBOARD SHORTCUTS =====================
+document.addEventListener('keydown', e => {
+    if (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT') return;
+    if (e.key==='ArrowDown') { e.preventDefault(); nextPost(); }
+    if (e.key==='ArrowUp') { e.preventDefault(); prevPost(); }
+    if (e.key==='n') startNewPost();
+});
+
+// ===================== INIT =====================
+renderSidebar();
+applyFilters();
+updateStorageIndicator();
+</script>
 </body>
 </html>
